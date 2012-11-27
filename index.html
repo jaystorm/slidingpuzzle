@@ -21,12 +21,42 @@
         <div class="table">
             <div class="table-cell">
                 <h1 class="title large">sliding puzzle</h1>
-                <ul class="menu" data-bind="foreach: mainMenu">
+                <ul class="menu">
+                    <li>
+                        <a href="#" data-bind="click: activePlayerMenu().action, event: { touchstart: activePlayerMenu().action }, text: activePlayerMenu().title"></a>
+                    </li>
+                    <!-- ko foreach: mainMenu -->
                     <li>
                         <a href="#" data-bind="click: $root.changePage, event: { touchstart: $root.changePage }, text: title"></a>
                     </li>
+                    <!-- /ko -->
                 </ul>
             </div>
+        </div>
+    </script>
+    
+    <script type="text/html" id="new-player">
+        <div class="table">
+            <div class="table-cell">
+                <h3 class="title">New player</h3>
+                <p>
+                    <!-- ko if: playerExists -->
+                        Sign in as an existing player or create a new player.
+                    <!-- /ko -->
+                    <!-- ko ifnot: playerExists -->
+                        Confirm your player name and your password and touch continue.
+                    <!-- /ko -->
+                </p>
+                <p><input type="text" placeholder="username" autofocus data-bind="value: username"/></p>
+                <p><input type="password" placeholder="password" data-bind="value: password"/></p>
+                <!-- ko ifnot: playerExists -->
+                    <p><input type="password" placeholder="confirm password" data-bind="value: passwordConfirm"/></p>
+                <!-- /ko -->
+                <div>
+                    <a href="#" data-bind="visible: playerExists() || (password() === passwordConfirm()), click: playerExists() ? loginUser : createUser, event: { touchstart: playerExists() ? loginUser : createUser }">Continue</a>
+                    <a href="#" class="action" data-bind="click: backToMenu, event: { touchstart: backToMenu }">Back to menu</a>
+                </div>
+            <div>
         </div>
     </script>
     
@@ -76,10 +106,10 @@
             <div class="table-cell">
                 <h3 class="title">Image gallery</h3>
                 <p>View images in the gallery. Select image to play.</p>
-                <div class="wrapper" data-bind="if: images().length > 0, visible: images().length > 0">
-                    <div class="scroller" data-bind="style: { width: (images().length * 220) + 'px' }, attr: { 'data-scroller': $root.initScroller() }">
+                <div class="wrapper">
+                    <div class="scroller">
                         <ul id="images" style="float: left;" data-bind="foreach: images">
-                            <li class="gallery-image-container" data-bind="css: { active: $index() == 0 }">
+                            <li class="gallery-image-container">
                                 <p>
                                     <img width="200px" height="200px" style="box-shadow: 2px 2px 2px #000; opacity: 0;" class="border3d" data-bind="attr: { src: $root.getThumbnailURL($data), 'data-image': $root.getImageURL($data), 'data-id': $data }, event: { load: function(data, event){ event.srcElement.style.opacity = ''; } }"/>
                                 </p>
@@ -148,7 +178,7 @@
                 <div id="leaderboards" class="wrapper">
                     <div class="scroller">
                         <table>
-                            <tbody data-bind="foreach: highscores, attr: { 'data-scroller': initTableScroller() }">
+                            <tbody data-bind="foreach: highscores">
                                 <tr>
                                     <td style="width: 25%;" class="message" data-bind="text: $data.Name"></td>
                                     <td style="width: 25%;" data-bind="text: $root.formatTime($data.Time)"></td>

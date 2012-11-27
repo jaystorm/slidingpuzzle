@@ -49,12 +49,14 @@ $(function(){
             appId: '62f4bc12-6736-4681-844b-67d9662605c5',
             serviceName: 'mydatabase'
         };
+        
+        var credentials = {};
 
         self.serviceFactory = ko.observable();
 
         self.mainMenu = ko.observableArray([
             { name: 'new-game', title: 'New game' },
-            { name: 'image-gallery', title: 'Image gallery' },
+            //{ name: 'image-gallery', title: 'Image gallery' },
             { name: 'how-to-play', title: 'How to play' },
             { name: 'leaderboards', title: 'Leaderboards' }
         ]);
@@ -66,6 +68,66 @@ $(function(){
             { name: 'veryhard-game', title: 'Very hard', size: 7, description: '7x7. Now beat this fast as you can!' },
             { name: 'nightmare-game', title: 'Nightmare', size: 9, description: 'Your worst puzzle nightmare! 9x9 tiles.' }
         ]);
+        
+        self.newPlayer = function(){
+            self.currentPage('new-player');
+        };
+        
+        self.myPlayer = function(){
+            
+        };
+        
+        self.playerMenu = {
+            newPlayer: { title: 'New player', action: self.newPlayer },
+            myPlayer: { title: 'My player', action: self.myPlayer }
+        };
+        
+        self.player = ko.observable();
+        self.playerExists = ko.observable(true);
+        self.activePlayerMenu = ko.observable(self.playerMenu.newPlayer);
+        
+        self.username = ko.observable();
+        self.password = ko.observable();
+        self.passwordConfirm = ko.observable();
+        
+        self.loginUser = function(){
+            credentials = {
+                user: self.username(),
+                password: self.password()
+            };
+            
+            self.mask(true);
+            return $data.initService(apiKey, credentials).then(function(mydatabase, factory, type){
+                self.serviceFactory(factory);
+                self.error(false);
+                self.mask(false);
+                self.playerExists(true);
+                self.activePlayerMenu(self.playerMenu.myPlayer);
+                self.currentPage('main-menu');
+            }).fail(function(err){
+                self.mask(false);
+                self.playerExists(false);
+            });
+        };
+        
+        self.createUser = function(){
+            self.mask(true);
+            return $data.initService(apiKey).then(function(mydatabase, factory, type){
+                self.serviceFactory(factory);
+                self.error(false);
+
+                return mydatabase.createUser(function(exists){
+                    self.playerExists(exists);
+                    if (exists){
+                        self.activePlayerMenu(self.playerMenu.myPlayer);
+                        self.currentPage('main-menu');
+                    }
+                });
+            }).fail(function(err){
+                self.mask(false);
+                self.error(true);
+            });
+        };
 
         self.images = ko.observableArray();
         self.imagesCount = ko.observable(0);
@@ -359,14 +421,22 @@ $(function(){
         self.currentPage.subscribe(function(page){
             switch (page){
                 case 'image-gallery':
+                    if (self.galleryScroller){
+                        self.galleryScroller.destroy();
+                        self.galleryScroller = null;
+                    }
                     self.images([]);
                     self.imagesCount(0);
-                    self.loadImages(0)//.then(self.initScroller);
+                    self.loadImages(0);
                     break;
                 case 'leaderboards':
+                    if (self.tableScroller){
+                        self.tableScroller.destroy();
+                        self.tableScroller = null;
+                    }
                     self.highscores([]);
                     self.highscoresCount(0);
-                    self.loadHighscores(0)//.then(self.initTableScroller);
+                    self.loadHighscores(0);
                     break;
             }
             
@@ -380,7 +450,7 @@ $(function(){
         
         self.loadImages = function(skip){
             self.mask(true);
-            return $data.initService(apiKey).then(function(mydatabase, factory, type){
+            return $data.initService(apiKey, credentials).then(function(mydatabase, factory, type){
                 self.serviceFactory(factory);
                 self.error(false);
 
@@ -388,22 +458,20 @@ $(function(){
                     mydatabase.Images.length(self.imagesCount);
                 }
                 
-                mydatabase.Images.filter(function(it){
+                return mydatabase.Images.filter(function(it){
                     return !it.Banned;
-                }).orderBy('it.LastModified').map(function(it){
+                }).orderByDescending('it.LastModified').map(function(it){
                     return it.Id;
                 }).skip(skip).take(5).toArray().then(function(images){
                     if (images.length){
                         if (self.images().length){
-                            for (var i = 0; i < images.length; i++){
-                                self.images.push(images[i]);
-                            }
+                            self.images(self.images().concat(images));
                         }else{
                             self.images(images);
                         }
                     }
                     self.mask(false);
-                });
+                }).then(self.initScroller);
             }).fail(function(err){
                 self.error(true);
                 self.mask(false);
@@ -412,7 +480,7 @@ $(function(){
         
         self.loadHighscores = function(skip){
             self.mask(true);
-            return $data.initService(apiKey).then(function(mydatabase, factory, type){
+            return $data.initService(apiKey, credentials).then(function(mydatabase, factory, type){
                 self.serviceFactory(factory);
                 self.error(false);
                 
@@ -427,16 +495,14 @@ $(function(){
                         .then(function(highscores){
                             if (highscores.length){
                                 if (self.highscores().length){
-                                    for (var i = 0; i < highscores.length; i++){
-                                        self.highscores.push(highscores[i]);
-                                    }
+                                    self.highscores(self.highscores().concat(highscores));
                                 }else{
                                     self.highscores(highscores);
                                 }
                             }
                             self.mask(false);
                         });
-                });
+                }).then(self.initTableScroller);
             }).fail(function(err){
                 self.error(true);
                 self.mask(false);
@@ -445,7 +511,7 @@ $(function(){
         
         self.sendScore = function(){
             self.mask(true);
-            return $data.initService(apiKey).then(function(mydatabase, factory, type){
+            return $data.initService(apiKey, credentials).then(function(mydatabase, factory, type){
                 self.serviceFactory(factory);
                 self.error(false);
                 
@@ -468,69 +534,74 @@ $(function(){
         
         self.galleryScroller = null;
         self.initScroller = function(){
-            if (self.galleryScroller){
-                self.galleryScroller.destroy();
-                self.galleryScroller = null;
-            }
-            
             setTimeout(function(){
-                self.galleryScroller = new iScroll(document.querySelector('#image-gallery .wrapper'), {
-                    snap: true,
-                    momentum: false,
-                    hScrollbar: false,
-                    useTransition: true,
-                    onScrollEnd: function(){
-                        document.querySelector('.gallery-image-container.active').className = 'gallery-image-container';
-                        document.querySelector('.gallery-image-container:nth-child(' + (this.currPageX + 1) + ')').className = 'gallery-image-container active';
-                        
-                        if (this.currPageX == this.pagesX.length - 1 && this.pagesX.length < self.imagesCount()){
-                            self.loadImages(this.currPageX + 1);
-                        }
+                document.querySelector('#image-gallery .wrapper .scroller').style.width = (self.images().length * 220) + 'px';
+                
+                if (self.galleryScroller){
+                    self.galleryScroller.refresh();
+                }else{
+                    if (!document.querySelector('.gallery-image-container.active')){
+                        document.querySelector('.gallery-image-container:nth-child(1)').className = 'gallery-image-container active';
                     }
-                });
+                    
+                    self.galleryScroller = new iScroll(document.querySelector('#image-gallery .wrapper'), {
+                        snap: true,
+                        momentum: true,
+                        hScrollbar: false,
+                        onScrollEnd: function(){
+                            if (document.querySelector('.gallery-image-container.active')){
+                                document.querySelector('.gallery-image-container.active').className = 'gallery-image-container';
+                            }
+                            document.querySelector('.gallery-image-container:nth-child(' + (this.currPageX + 1) + ')').className = 'gallery-image-container active';
+                            
+                            if (this.currPageX == this.pagesX.length - 1 && this.pagesX.length < self.imagesCount()){
+                                self.loadImages(this.currPageX + 1);
+                            }
+                        }
+                    });
+                }
             }, 0);
         };
         
         self.initTableScroller = function(data, event){
-            if (self.tableScroller){
-                self.tableScroller.destroy();
-                self.tableScroller = null;
-            }
-            
             setTimeout(function(){
-                pullUpEl = document.getElementById('pullUp');
-                pullUpOffset = pullUpEl.offsetHeight;
-                
-                self.tableScroller = new iScroll(document.querySelector('#leaderboards .wrapper'), {
-                    useTransition: true,
-                    onRefresh: function(){
-                        if (pullUpEl.className.match('loading')) {
-                            pullUpEl.className = 'message';
-                            pullUpEl.innerHTML = 'Pull up to load more...';
-                        }
-                    },
-                    onScrollMove: function(){
-                        if (this.y < (this.maxScrollY - 5) && !pullUpEl.className.match('flip')){
-                            pullUpEl.className = 'message flip';
-                            pullUpEl.innerHTML = 'Release to refresh...';
-                            this.maxScrollY = this.maxScrollY;
-                        } else if (this.y > (this.maxScrollY + 5) && pullUpEl.className.match('flip')) {
-                            pullUpEl.className = 'message';
-                            pullUpEl.innerHTML = 'Pull up to load more...';
-                            this.maxScrollY = pullUpOffset;
-                        }
-                    },
-                    onScrollEnd: function(){
-                        if (pullUpEl.className.match('message flip')) {
-                            pullUpEl.className = 'message loading';
-                            pullUpEl.innerHTML = 'Loading...';
-                            self.loadHighscores(document.querySelector('#leaderboards .wrapper table tbody').children.length).then(function(){
+                if (self.tableScroller){
+                    self.tableScroller.refresh();
+                }else{
+                    pullUpEl = document.getElementById('pullUp');
+                    pullUpOffset = pullUpEl.offsetHeight;
+                    
+                    self.tableScroller = new iScroll(document.querySelector('#leaderboards .wrapper'), {
+                        useTransition: true,
+                        onRefresh: function(){
+                            if (pullUpEl.className.match('loading')) {
                                 pullUpEl.className = 'message';
                                 pullUpEl.innerHTML = 'Pull up to load more...';
-                            });
+                            }
+                        },
+                        onScrollMove: function(){
+                            if (this.y < (this.maxScrollY - 5) && !pullUpEl.className.match('flip')){
+                                pullUpEl.className = 'message flip';
+                                pullUpEl.innerHTML = 'Release to refresh...';
+                                this.maxScrollY = this.maxScrollY;
+                            } else if (this.y > (this.maxScrollY + 5) && pullUpEl.className.match('flip')) {
+                                pullUpEl.className = 'message';
+                                pullUpEl.innerHTML = 'Pull up to load more...';
+                                this.maxScrollY = pullUpOffset;
+                            }
+                        },
+                        onScrollEnd: function(){
+                            if (pullUpEl.className.match('message flip')) {
+                                pullUpEl.className = 'message loading';
+                                pullUpEl.innerHTML = 'Loading...';
+                                self.loadHighscores(document.querySelector('#leaderboards .wrapper table tbody').children.length).then(function(){
+                                    pullUpEl.className = 'message';
+                                    pullUpEl.innerHTML = 'Pull up to load more...';
+                                });
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }, 0);
         }
 
