@@ -142,10 +142,10 @@ $(function(){
                 self.serviceFactory(factory);
                 self.error(false);
 
-                mydatabase.Images.filter(function(it){
+                return mydatabase.Images.filter(function(it){
                     return !it.Banned;
                 }).length(function(cnt){
-                    mydatabase.Images.map(function(it){
+                    return mydatabase.Images.map(function(it){
                         return it.Id;
                     }).skip(Math.floor(Math.random() * cnt)).take(1).forEach(function(it){
                         self.mask(false);
