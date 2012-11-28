@@ -50,13 +50,11 @@ $(function(){
             serviceName: 'mydatabase'
         };
         
-        var credentials = {};
-
         self.serviceFactory = ko.observable();
 
         self.mainMenu = ko.observableArray([
             { name: 'new-game', title: 'New game' },
-            //{ name: 'image-gallery', title: 'Image gallery' },
+            { name: 'image-gallery', title: 'Image gallery' },
             { name: 'how-to-play', title: 'How to play' },
             { name: 'leaderboards', title: 'Leaderboards' }
         ]);
@@ -68,66 +66,6 @@ $(function(){
             { name: 'veryhard-game', title: 'Very hard', size: 7, description: '7x7. Now beat this fast as you can!' },
             { name: 'nightmare-game', title: 'Nightmare', size: 9, description: 'Your worst puzzle nightmare! 9x9 tiles.' }
         ]);
-        
-        self.newPlayer = function(){
-            self.currentPage('new-player');
-        };
-        
-        self.myPlayer = function(){
-            
-        };
-        
-        self.playerMenu = {
-            newPlayer: { title: 'New player', action: self.newPlayer },
-            myPlayer: { title: 'My player', action: self.myPlayer }
-        };
-        
-        self.player = ko.observable();
-        self.playerExists = ko.observable(true);
-        self.activePlayerMenu = ko.observable(self.playerMenu.newPlayer);
-        
-        self.username = ko.observable();
-        self.password = ko.observable();
-        self.passwordConfirm = ko.observable();
-        
-        self.loginUser = function(){
-            credentials = {
-                user: self.username(),
-                password: self.password()
-            };
-            
-            self.mask(true);
-            return $data.initService(apiKey, credentials).then(function(mydatabase, factory, type){
-                self.serviceFactory(factory);
-                self.error(false);
-                self.mask(false);
-                self.playerExists(true);
-                self.activePlayerMenu(self.playerMenu.myPlayer);
-                self.currentPage('main-menu');
-            }).fail(function(err){
-                self.mask(false);
-                self.playerExists(false);
-            });
-        };
-        
-        self.createUser = function(){
-            self.mask(true);
-            return $data.initService(apiKey).then(function(mydatabase, factory, type){
-                self.serviceFactory(factory);
-                self.error(false);
-
-                return mydatabase.createUser(function(exists){
-                    self.playerExists(exists);
-                    if (exists){
-                        self.activePlayerMenu(self.playerMenu.myPlayer);
-                        self.currentPage('main-menu');
-                    }
-                });
-            }).fail(function(err){
-                self.mask(false);
-                self.error(true);
-            });
-        };
 
         self.images = ko.observableArray();
         self.imagesCount = ko.observable(0);
@@ -450,7 +388,7 @@ $(function(){
         
         self.loadImages = function(skip){
             self.mask(true);
-            return $data.initService(apiKey, credentials).then(function(mydatabase, factory, type){
+            return $data.initService(apiKey).then(function(mydatabase, factory, type){
                 self.serviceFactory(factory);
                 self.error(false);
 
@@ -480,7 +418,7 @@ $(function(){
         
         self.loadHighscores = function(skip){
             self.mask(true);
-            return $data.initService(apiKey, credentials).then(function(mydatabase, factory, type){
+            return $data.initService(apiKey).then(function(mydatabase, factory, type){
                 self.serviceFactory(factory);
                 self.error(false);
                 
@@ -511,7 +449,7 @@ $(function(){
         
         self.sendScore = function(){
             self.mask(true);
-            return $data.initService(apiKey, credentials).then(function(mydatabase, factory, type){
+            return $data.initService(apiKey).then(function(mydatabase, factory, type){
                 self.serviceFactory(factory);
                 self.error(false);
                 

@@ -44,7 +44,7 @@ html, body{
     text-shadow: 5px 5px 5px #111;
 }
 
-input[type="text"], input[type="password"]{
+input[type="text"]{
     vertical-align: middle;
     background-color: #ffa;
     border: 3px solid gold;
@@ -53,6 +53,8 @@ input[type="text"], input[type="password"]{
     padding: 3px;
     font-family: 'vitaminregular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     box-shadow: 3px 3px 3px #111;
+    max-width: 80%;
+    width: 80%;
 }
 
 input[type="text"]:invalid{
@@ -73,9 +75,9 @@ a{
     border-right: 2px solid #990;
     border-bottom: 2px solid #990;
     border-radius: 1em;
-    padding: 0.5em 1em 0.5em 1em;
+    padding: 0.25em 0.5em 0.25em 0.5em;
     font-weight: bold;
-    font-size: 1em;
+    font-size: 0.8em;
     line-height: 2.5em;
     cursor: pointer;
     text-decoration: none;
