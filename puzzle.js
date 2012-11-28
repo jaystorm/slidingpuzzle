@@ -70,11 +70,13 @@ $(function(){
         ]);
         
         self.newPlayer = function(){
+            self.username('');
+            self.password('');
             self.currentPage('new-player');
         };
         
         self.myPlayer = function(){
-            
+            self.currentPage('my-player');
         };
         
         self.playerMenu = {
@@ -102,6 +104,7 @@ $(function(){
                 self.error(false);
                 self.mask(false);
                 self.playerExists(true);
+                self.player(credentials.user);
                 self.activePlayerMenu(self.playerMenu.myPlayer);
                 self.currentPage('main-menu');
             }).fail(function(err){
@@ -174,7 +177,7 @@ $(function(){
         
         self.saveFile = function(){
             self.mask(true);
-            $data.initService(apiKey).then(function(mydatabase, factory, type){
+            $data.initService(apiKey, credentials).then(function(mydatabase, factory, type){
                 self.serviceFactory(factory);
                 self.error(false);
 
@@ -200,7 +203,7 @@ $(function(){
         
         self.randomImage = function(){
             self.mask(true);
-            $data.initService(apiKey).then(function(mydatabase, factory, type){
+            $data.initService(apiKey, credentials).then(function(mydatabase, factory, type){
                 self.serviceFactory(factory);
                 self.error(false);
 
