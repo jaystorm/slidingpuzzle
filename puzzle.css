@@ -212,7 +212,7 @@ table.columns-4 tr th, table.columns-4 tr td{
     height: 100%;
 }
 
-#leaderboards .wrapper{
+#leaderboard .wrapper{
     height: 300px;
 }
 
@@ -320,7 +320,7 @@ table.columns-4 tr th, table.columns-4 tr td{
         zoom: 0.8;
     }
     
-    #leaderboards .wrapper{
+    #leaderboard .wrapper{
         height: 275px;
     }
 }
@@ -334,7 +334,7 @@ table.columns-4 tr th, table.columns-4 tr td{
         zoom: 0.7;
     }
     
-    #leaderboards .wrapper{
+    #leaderboard .wrapper{
         height: 250px;
     }
 }
@@ -348,7 +348,7 @@ table.columns-4 tr th, table.columns-4 tr td{
         zoom: 0.6;
     }
     
-    #leaderboards .wrapper{
+    #leaderboard .wrapper{
         height: 250px;
     }
 }
@@ -362,7 +362,7 @@ table.columns-4 tr th, table.columns-4 tr td{
         zoom: 0.5;
     }
     
-    #leaderboards .wrapper{
+    #leaderboard .wrapper{
         height: 225px;
     }
 }
@@ -376,7 +376,7 @@ table.columns-4 tr th, table.columns-4 tr td{
         zoom: 0.4;
     }
     
-    #leaderboards .wrapper{
+    #leaderboard .wrapper{
         height: 200px;
     }
 }
@@ -386,7 +386,7 @@ table.columns-4 tr th, table.columns-4 tr td{
         padding: 0 10% 0 10%;
     }
     
-    #leaderboards table{
+    #leaderboard table{
         font-size: 0.5em;
     }
     

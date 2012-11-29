@@ -56,7 +56,7 @@ $(function(){
             { name: 'new-game', title: 'New game' },
             { name: 'image-gallery', title: 'Image gallery' },
             { name: 'how-to-play', title: 'How to play' },
-            { name: 'leaderboards', title: 'Leaderboards' }
+            { name: 'leaderboard', title: 'Leaderboard' }
         ]);
 
         self.gameMenu = ko.observableArray([
@@ -264,7 +264,6 @@ $(function(){
                                 break;
                             case 'left':
                                 t = (tileMap[y] || empty)[x + 1];
-
                                 break;
                             case 'right':
                                 t = (tileMap[y] || empty)[x - 1];
@@ -289,7 +288,6 @@ $(function(){
                                         break;
                                     case 'left':
                                         tileMap[y][x] = t;
-
                                         tileMap[y][x + 1] = null;
                                         break;
                                     case 'right':
@@ -363,7 +361,7 @@ $(function(){
                     self.imagesCount(0);
                     self.loadImages(0);
                     break;
-                case 'leaderboards':
+                case 'leaderboard':
                     if (self.tableScroller){
                         self.tableScroller.destroy();
                         self.tableScroller = null;
@@ -456,7 +454,7 @@ $(function(){
                 
                 return mydatabase.saveChanges().then(function(){
                     self.mask(false);
-                    self.currentPage('leaderboards');
+                    self.currentPage('leaderboard');
                 });
             }).fail(function(err){
                 self.error(true);
@@ -503,7 +501,7 @@ $(function(){
                     pullUpEl = document.getElementById('pullUp');
                     pullUpOffset = pullUpEl.offsetHeight;
                     
-                    self.tableScroller = new iScroll(document.querySelector('#leaderboards .wrapper'), {
+                    self.tableScroller = new iScroll(document.querySelector('#leaderboard .wrapper'), {
                         useTransition: true,
                         onRefresh: function(){
                             if (pullUpEl.className.match('loading')) {
@@ -526,7 +524,7 @@ $(function(){
                             if (pullUpEl.className.match('message flip')) {
                                 pullUpEl.className = 'message loading';
                                 pullUpEl.innerHTML = 'Loading...';
-                                self.loadHighscores(document.querySelector('#leaderboards .wrapper table tbody').children.length).then(function(){
+                                self.loadHighscores(document.querySelector('#leaderboard .wrapper table tbody').children.length).then(function(){
                                     pullUpEl.className = 'message';
                                     pullUpEl.innerHTML = 'Pull up to load more...';
                                 });
