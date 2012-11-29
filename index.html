@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=0.6" />
+    <meta name="viewport" content="user-scalable=no, width=device-width" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <title>Sliding Puzzle</title>
-    <script src="http://code.jquery.com/jquery.js" type="text/javascript"></script>
+    <script src="http://code.jquery.com/jquery.min.js" type="text/javascript"></script>
     <script src="http://include.jaydata.org/knockout-2.1.0.js" type="text/javascript"></script>
     <script src="http://include.jaydata.org/datajs-1.0.3.min.js" type="text/javascript"></script>
     <script src="http://include.jaydata.org/jaydata.min.js" type="text/javascript"></script>
@@ -135,25 +135,25 @@
         <div id="leaderboards" class="table">
             <div class="table-cell">
                 <h3 class="title">Leaderboards</h3>
-                <table>
+                <table class="columns-4">
                     <thead>
                         <tr>
-                            <th style="width: 25%;">Name</th>
-                            <th style="width: 25%;">Time</th>
-                            <th style="width: 25%;">Tiles moved</th>
-                            <th style="width: 25%;">Difficulty</th>
+                            <th>Name</th>
+                            <th>Time</th>
+                            <th>Tiles moved</th>
+                            <th>Difficulty</th>
                         </tr>
                     </thead>
                 </table>
                 <div id="leaderboards" class="wrapper">
                     <div class="scroller">
-                        <table>
+                        <table class="columns-4">
                             <tbody data-bind="foreach: highscores">
                                 <tr>
-                                    <td style="width: 25%;" class="message" data-bind="text: $data.Name"></td>
-                                    <td style="width: 25%;" data-bind="text: $root.formatTime($data.Time)"></td>
-                                    <td style="width: 25%;" data-bind="text: $data.Moves"></td>
-                                    <td style="width: 25%;" data-bind="text: $data.Size + 'x' + $data.Size"></td>
+                                    <td class="message" data-bind="text: $data.Name"></td>
+                                    <td data-bind="text: $root.formatTime($data.Time)"></td>
+                                    <td data-bind="text: $data.Moves"></td>
+                                    <td data-bind="text: $data.Size + 'x' + $data.Size"></td>
                                 </tr>
                             </tbody>
                         </table>

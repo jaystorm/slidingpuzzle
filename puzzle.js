@@ -62,7 +62,7 @@ $(function(){
         self.gameMenu = ko.observableArray([
             { name: 'easy-game', title: 'Easy', size: 3, description: 'A field of 3x3 tiles. Easy as pie!' },
             { name: 'normal-game', title: 'Normal', size: 4, description: '4x4 tiles for you to play. Still not a challenge.' },
-            { name: 'hard-game', title: 'Hard', size: 5, description: 'Tiles in 5x5. I\'t getting interesting...' },
+            { name: 'hard-game', title: 'Hard', size: 5, description: 'Tiles in 5x5. It\'s getting interesting...' },
             { name: 'veryhard-game', title: 'Very hard', size: 7, description: '7x7. Now beat this fast as you can!' },
             { name: 'nightmare-game', title: 'Nightmare', size: 9, description: 'Your worst puzzle nightmare! 9x9 tiles.' }
         ]);
@@ -359,10 +359,6 @@ $(function(){
         self.currentPage.subscribe(function(page){
             switch (page){
                 case 'image-gallery':
-                    if (self.galleryScroller){
-                        self.galleryScroller.destroy();
-                        self.galleryScroller = null;
-                    }
                     self.images([]);
                     self.imagesCount(0);
                     self.loadImages(0);
@@ -378,11 +374,9 @@ $(function(){
                     break;
             }
             
-            if (page != 'image-gallery'){
-                if (self.galleryScroller){
-                    self.galleryScroller.destroy();
-                    self.galleryScroller = null;
-                }
+            if (self.galleryScroller){
+                self.galleryScroller.destroy();
+                self.galleryScroller = null;
             }
         });
         

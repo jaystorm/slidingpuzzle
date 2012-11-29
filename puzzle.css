@@ -190,11 +190,14 @@ ul#images{
 
 table{
     width: 100%;
-    
 }
 
 table thead th{
     color: gold;
+}
+
+table.columns-4 tr th, table.columns-4 tr td{
+    width: 25%;
 }
 
 #image-gallery .wrapper{
@@ -281,12 +284,9 @@ table thead th{
     margin-left: auto;
     margin-right: auto;
     border: 3px solid gold;
-    /*-webkit-border-image: url(border.jpg) 38 30 43 30 fill stretch;*/
-    /*border-width: 32px;*/
     box-shadow: 3px 3px 3px #000;
     position: relative;
     background: url(wood.png), #521;
-    /*background-image: url(wood.jpg);*/
 }
 
 .border3d{
