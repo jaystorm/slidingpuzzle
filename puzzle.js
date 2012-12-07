@@ -25,13 +25,13 @@ $(function(){
         };
         
         var arrayBufferToBase64 = function(buffer){
-            var binary = ''
+            var binary = '';
             var bytes = new Uint8Array(buffer);
             for (var i = 0; i < bytes.byteLength; i++) {
                 binary += String.fromCharCode(bytes[i]);
             }
             return btoa(binary);
-        }
+        };
         
         var checkWin = function(){
             for (var i = 0; i < tileMap.length; i++){
@@ -42,7 +42,7 @@ $(function(){
             }
 
             return true;
-        }
+        };
         
         var apiKey = {
             ownerId: '1199df77-c68b-4f52-8106-fa62d9542880',
@@ -307,7 +307,7 @@ $(function(){
                         }
 
                         if (e.originalEvent.stopPropagation) e.originalEvent.stopPropagation();
-                        if (e.originalEvent.cancelBubble != null) e.originalEvent.cancelBubble = true;
+                        if (e.originalEvent.cancelBubble !== null) e.originalEvent.cancelBubble = true;
                         if (e.originalEvent.preventDefault) e.originalEvent.preventDefault();
                         return false;
                     };
@@ -533,12 +533,12 @@ $(function(){
                     });
                 }
             }, 0);
-        }
+        };
 
         self.getImageURL = function(id, ctx){
             var f = ctx || self.serviceFactory()();
             if (f){
-                return f.storageProvider.providerConfiguration.oDataServiceHost + '/getImage?id=\'' + id + '\'';
+                return f.storageProvider.providerConfiguration.oDataServiceHost + f.getImage(id).toTraceString().queryText;
             }else{
                 return '_blank';
             }
@@ -547,7 +547,7 @@ $(function(){
         self.getThumbnailURL = function(id, ctx){
             var f = ctx || self.serviceFactory()();
             if (f){
-                return f.storageProvider.providerConfiguration.oDataServiceHost + '/getThumbnail?id=\'' + id + '\'';
+                return f.storageProvider.providerConfiguration.oDataServiceHost + f.getThumbnail(id).toTraceString().queryText;
             }else{
                 return '_blank';
             }
